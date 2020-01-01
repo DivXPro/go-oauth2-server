@@ -40,7 +40,7 @@ func (s *OauthScope) TableName() string {
 // OauthRole is a one of roles user can have (currently superuser or user)
 type OauthRole struct {
 	TimestampModel
-	ID   string `gorm:"primary_key" sql:"type:varchar(20)"`
+	ID   string `gorm:"primary_key" sql:"type:varchar(32)"`
 	Name string `sql:"type:varchar(50);unique;not null"`
 }
 
@@ -52,7 +52,7 @@ func (r *OauthRole) TableName() string {
 // OauthUser ...
 type OauthUser struct {
 	MyGormModel
-	RoleID   sql.NullString `sql:"type:varchar(20);index;not null"`
+	RoleID   sql.NullString `sql:"type:varchar(32);index;not null"`
 	Role     *OauthRole
 	Username string         `sql:"type:varchar(254);unique;not null"`
 	Password sql.NullString `sql:"type:varchar(60)"`

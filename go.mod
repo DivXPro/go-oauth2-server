@@ -90,15 +90,15 @@ require (
 	go.opencensus.io v0.19.0 // indirect
 	go4.org v0.0.0-20190218023631-ce4c26f7be8e // indirect
 	golang.org/x/build v0.0.0-20190221024721-9e83d8587038 // indirect
-	golang.org/x/crypto v0.0.0-20190219172222-a4c6cb3142f2
+	golang.org/x/crypto v0.0.0-20191227163750-53104e6ec876
 	golang.org/x/exp v0.0.0-20190212162250-21964bba6549 // indirect
-	golang.org/x/net v0.0.0-20190213061140-3a22650c66bd
+	golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
 	golang.org/x/oauth2 v0.0.0-20190220154721-9b3c75971fc9 // indirect
 	golang.org/x/perf v0.0.0-20190124201629-844a5f5b46f4 // indirect
-	golang.org/x/sys v0.0.0-20190221075227-b4e8571b14e0 // indirect
 	golang.org/x/tools v0.0.0-20190221000707-a754db16a40a // indirect
 	google.golang.org/genproto v0.0.0-20190219182410-082222b4a5c5 // indirect
 	google.golang.org/grpc v1.18.0 // indirect
+	gopkg.in/ini.v1 v1.51.1
 	gopkg.in/tylerb/graceful.v1 v1.2.15
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
 	honnef.co/go/tools v0.0.0-20190215041234-466a0476246c // indirect

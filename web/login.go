@@ -39,8 +39,9 @@ func (s *Service) login(w http.ResponseWriter, r *http.Request) {
 
 	// Authenticate the user
 	user, err := s.oauthService.AuthUser(
-		r.Form.Get("email"),    // username
+		r.Form.Get("username"), // username
 		r.Form.Get("password"), // password
+		r.Form.Get("tenantId"),
 	)
 	if err != nil {
 		sessionService.SetFlashMessage(err.Error())

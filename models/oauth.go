@@ -15,6 +15,8 @@ type OauthClient struct {
 	Key         string         `sql:"type:varchar(254);unique;not null"`
 	Secret      string         `sql:"type:varchar(60);not null"`
 	RedirectURI sql.NullString `sql:"type:varchar(200)"`
+	Name        string         `sql:"type varchar(100);not null"`
+	TenantID    string         `sql:"type varchar(32);not null"`
 }
 
 // TableName specifies table name
@@ -54,6 +56,7 @@ type OauthUser struct {
 	Role     *OauthRole
 	Username string         `sql:"type:varchar(254);unique;not null"`
 	Password sql.NullString `sql:"type:varchar(60)"`
+	TenantID string         `sql:"type varchar(32);not null"`
 }
 
 // TableName specifies table name
@@ -64,6 +67,7 @@ func (u *OauthUser) TableName() string {
 // OauthRefreshToken ...
 type OauthRefreshToken struct {
 	MyGormModel
+	TenantID  string         `sql:"type varchar(32);not null"`
 	ClientID  sql.NullString `sql:"index;not null"`
 	UserID    sql.NullString `sql:"index"`
 	Client    *OauthClient
@@ -81,6 +85,7 @@ func (rt *OauthRefreshToken) TableName() string {
 // OauthAccessToken ...
 type OauthAccessToken struct {
 	MyGormModel
+	TenantID  string         `sql:"type varchar(32);not null"`
 	ClientID  sql.NullString `sql:"index;not null"`
 	UserID    sql.NullString `sql:"index"`
 	Client    *OauthClient
@@ -98,6 +103,7 @@ func (at *OauthAccessToken) TableName() string {
 // OauthAuthorizationCode ...
 type OauthAuthorizationCode struct {
 	MyGormModel
+	TenantID    string         `sql:"type varchar(32);not null"`
 	ClientID    sql.NullString `sql:"index;not null"`
 	UserID      sql.NullString `sql:"index;not null"`
 	Client      *OauthClient
@@ -120,6 +126,7 @@ func NewOauthRefreshToken(client *OauthClient, user *OauthUser, expiresIn int, s
 			ID:        uuid.New(),
 			CreatedAt: time.Now().UTC(),
 		},
+		TenantID:  user.TenantID,
 		ClientID:  util.StringOrNull(string(client.ID)),
 		Token:     uuid.New(),
 		ExpiresAt: time.Now().UTC().Add(time.Duration(expiresIn) * time.Second),
@@ -138,6 +145,7 @@ func NewOauthAccessToken(client *OauthClient, user *OauthUser, expiresIn int, sc
 			ID:        uuid.New(),
 			CreatedAt: time.Now().UTC(),
 		},
+		TenantID:  user.TenantID,
 		ClientID:  util.StringOrNull(string(client.ID)),
 		Token:     uuid.New(),
 		ExpiresAt: time.Now().UTC().Add(time.Duration(expiresIn) * time.Second),
@@ -156,6 +164,7 @@ func NewOauthAuthorizationCode(client *OauthClient, user *OauthUser, expiresIn i
 			ID:        uuid.New(),
 			CreatedAt: time.Now().UTC(),
 		},
+		TenantID:    user.TenantID,
 		ClientID:    util.StringOrNull(string(client.ID)),
 		UserID:      util.StringOrNull(string(user.ID)),
 		Code:        uuid.New(),

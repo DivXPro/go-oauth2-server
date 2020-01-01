@@ -14,12 +14,12 @@ import (
 
 func (suite *OauthTestSuite) TestUserExistsFindsValidUser() {
 	validUsername := suite.users[0].Username
-	assert.True(suite.T(), suite.service.UserExists(validUsername))
+	assert.True(suite.T(), suite.service.UserExists(validUsername, ""))
 }
 
 func (suite *OauthTestSuite) TestUserExistsDoesntFindInvalidUser() {
 	invalidUsername := "bogus_name"
-	assert.False(suite.T(), suite.service.UserExists(invalidUsername))
+	assert.False(suite.T(), suite.service.UserExists(invalidUsername, ""))
 }
 
 func (suite *OauthTestSuite) TestUpdateUsernameWorksWithValidEntry() {
@@ -27,6 +27,7 @@ func (suite *OauthTestSuite) TestUpdateUsernameWorksWithValidEntry() {
 		roles.User,      // role ID
 		"test@newuser",  // username
 		"test_password", // password
+		"",
 	)
 
 	assert.NoError(suite.T(), err)
@@ -47,6 +48,7 @@ func (suite *OauthTestSuite) TestUpdateUsernameTxWorksWithValidEntry() {
 		roles.User,      // role ID
 		"test@newuser",  // username
 		"test_password", // password
+		"",
 	)
 
 	assert.NoError(suite.T(), err)
@@ -67,6 +69,7 @@ func (suite *OauthTestSuite) TestUpdateUsernameFailsWithABlankEntry() {
 		roles.User,      // role ID
 		"test@newuser",  // username
 		"test_password", // password
+		"",
 	)
 
 	assert.NoError(suite.T(), err)
@@ -133,6 +136,7 @@ func (suite *OauthTestSuite) TestCreateUser() {
 		roles.User,      // role ID
 		"test@user",     // username
 		"test_password", // password
+		"",
 	)
 
 	// User object should be nil
@@ -148,6 +152,7 @@ func (suite *OauthTestSuite) TestCreateUser() {
 		roles.User,      // role ID
 		"test@newuser",  // username
 		"test_password", // password
+		"",
 	)
 
 	// Error should be nil
@@ -163,6 +168,7 @@ func (suite *OauthTestSuite) TestCreateUser() {
 		roles.User,      // role ID
 		"TeSt@NeWuSeR2", // username
 		"test_password", // password
+		"",
 	)
 
 	// Error should be nil
@@ -231,7 +237,7 @@ func (suite *OauthTestSuite) TestAuthUser() {
 	assert.NoError(suite.T(), err, "Inserting test data failed")
 
 	// When we try to authenticate a user without a password
-	user, err = suite.service.AuthUser("test@user_nopass", "bogus")
+	user, err = suite.service.AuthUser("test@user_nopass", "bogus", "")
 
 	// User object should be nil
 	assert.Nil(suite.T(), user)
@@ -242,7 +248,7 @@ func (suite *OauthTestSuite) TestAuthUser() {
 	}
 
 	// When we try to authenticate with a bogus username
-	user, err = suite.service.AuthUser("bogus", "test_password")
+	user, err = suite.service.AuthUser("bogus", "test_password", "")
 
 	// User object should be nil
 	assert.Nil(suite.T(), user)
@@ -253,7 +259,7 @@ func (suite *OauthTestSuite) TestAuthUser() {
 	}
 
 	// When we try to authenticate with an invalid password
-	user, err = suite.service.AuthUser("test@user", "bogus")
+	user, err = suite.service.AuthUser("test@user", "bogus", "")
 
 	// User object should be nil
 	assert.Nil(suite.T(), user)
@@ -264,7 +270,7 @@ func (suite *OauthTestSuite) TestAuthUser() {
 	}
 
 	// When we try to authenticate with valid username and password
-	user, err = suite.service.AuthUser("test@user", "test_password")
+	user, err = suite.service.AuthUser("test@user", "test_password", "")
 
 	// Error should be nil
 	assert.Nil(suite.T(), err)
@@ -275,7 +281,7 @@ func (suite *OauthTestSuite) TestAuthUser() {
 	}
 
 	// Test username case insensitivity
-	user, err = suite.service.AuthUser("TeSt@UsEr", "test_password")
+	user, err = suite.service.AuthUser("TeSt@UsEr", "test_password", "")
 
 	// Error should be nil
 	assert.Nil(suite.T(), err)
@@ -296,6 +302,7 @@ func (suite *OauthTestSuite) TestBlankPassword() {
 		roles.User,         // role ID
 		"test@user_nopass", // username
 		"",                 // password
+		"",
 	)
 
 	// Error should be nil
@@ -307,7 +314,7 @@ func (suite *OauthTestSuite) TestBlankPassword() {
 	}
 
 	// When we try to authenticate
-	user, err = suite.service.AuthUser("test@user_nopass", "")
+	user, err = suite.service.AuthUser("test@user_nopass", "", "")
 
 	// User object should be nil
 	assert.Nil(suite.T(), user)

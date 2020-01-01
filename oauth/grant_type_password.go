@@ -21,7 +21,7 @@ func (s *Service) passwordGrant(r *http.Request, client *models.OauthClient) (*A
 	}
 
 	// Authenticate the user
-	user, err := s.AuthUser(r.Form.Get("username"), r.Form.Get("password"))
+	user, err := s.AuthUser(r.Form.Get("username"), r.Form.Get("password"), r.Form.Get("tenantId"))
 	if err != nil {
 		// For security reasons, return a general error message
 		return nil, ErrInvalidUsernameOrPassword

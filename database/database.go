@@ -48,6 +48,31 @@ func NewDatabase(cnf *config.Config) (*gorm.DB, error) {
 		db.LogMode(cnf.IsDevelopment)
 
 		return db, nil
+	} else if cnf.Database.Type == "mysql" {
+		args := fmt.Sprintf(
+			"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
+			cnf.Database.User,
+			cnf.Database.Password,
+			cnf.Database.Host,
+			cnf.Database.Port,
+			cnf.Database.DatabaseName,
+		)
+
+		db, err := gorm.Open(cnf.Database.Type, args)
+
+		if err != nil {
+			return db, err
+		}
+
+		// Max idle connections
+		db.DB().SetMaxIdleConns(cnf.Database.MaxIdleConns)
+
+		// Max open connections
+		db.DB().SetMaxOpenConns(cnf.Database.MaxOpenConns)
+
+		// Database logging
+		db.LogMode(cnf.IsDevelopment)
+		return db, nil
 	}
 
 	// Database type not supported

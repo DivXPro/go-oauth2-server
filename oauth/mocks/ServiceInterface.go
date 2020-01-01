@@ -92,8 +92,8 @@ func (_m *ServiceInterface) FindClientByClientID(clientID string) (*models.Oauth
 
 	return r0, r1
 }
-func (_m *ServiceInterface) CreateClient(clientID string, secret string, redirectURI string) (*models.OauthClient, error) {
-	ret := _m.Called(clientID, secret, redirectURI)
+func (_m *ServiceInterface) CreateClient(clientID string, secret string, redirectURI string, tenantID string) (*models.OauthClient, error) {
+	ret := _m.Called(clientID, secret, redirectURI, tenantID)
 
 	var r0 *models.OauthClient
 	if rf, ok := ret.Get(0).(func(string, string, string) *models.OauthClient); ok {
@@ -105,20 +105,20 @@ func (_m *ServiceInterface) CreateClient(clientID string, secret string, redirec
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, string, string) error); ok {
-		r1 = rf(clientID, secret, redirectURI)
+	if rf, ok := ret.Get(1).(func(string, string, string, string) error); ok {
+		r1 = rf(clientID, secret, redirectURI, tenantID)
 	} else {
 		r1 = ret.Error(1)
 	}
 
 	return r0, r1
 }
-func (_m *ServiceInterface) CreateClientTx(tx *gorm.DB, clientID string, secret string, redirectURI string) (*models.OauthClient, error) {
-	ret := _m.Called(tx, clientID, secret, redirectURI)
+func (_m *ServiceInterface) CreateClientTx(tx *gorm.DB, clientID string, secret string, redirectURI string, tenantID string) (*models.OauthClient, error) {
+	ret := _m.Called(tx, clientID, secret, redirectURI, tenantID)
 
 	var r0 *models.OauthClient
-	if rf, ok := ret.Get(0).(func(*gorm.DB, string, string, string) *models.OauthClient); ok {
-		r0 = rf(tx, clientID, secret, redirectURI)
+	if rf, ok := ret.Get(0).(func(*gorm.DB, string, string, string, string) *models.OauthClient); ok {
+		r0 = rf(tx, clientID, secret, redirectURI, tenantID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.OauthClient)
@@ -126,8 +126,8 @@ func (_m *ServiceInterface) CreateClientTx(tx *gorm.DB, clientID string, secret 
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*gorm.DB, string, string, string) error); ok {
-		r1 = rf(tx, clientID, secret, redirectURI)
+	if rf, ok := ret.Get(1).(func(*gorm.DB, string, string, string, string) error); ok {
+		r1 = rf(tx, clientID, secret, redirectURI, tenantID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -155,7 +155,7 @@ func (_m *ServiceInterface) AuthClient(clientID string, secret string) (*models.
 
 	return r0, r1
 }
-func (_m *ServiceInterface) UserExists(username string) bool {
+func (_m *ServiceInterface) UserExists(username string, tenantID string) bool {
 	ret := _m.Called(username)
 
 	var r0 bool

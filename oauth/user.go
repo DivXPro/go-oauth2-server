@@ -35,8 +35,8 @@ var (
 )
 
 // UserExists returns true if user exists
-func (s *Service) UserExists(username string) bool {
-	_, err := s.FindUserByUsername(username)
+func (s *Service) UserExists(username string, tenantID string) bool {
+	_, err := s.FindUserByUsernameAndTenantID(username, tenantID)
 	return err == nil
 }
 
@@ -55,14 +55,29 @@ func (s *Service) FindUserByUsername(username string) (*models.OauthUser, error)
 	return user, nil
 }
 
+// FindUserByUsernameAndTenantID looks up a user by username and tenantId
+func (s *Service) FindUserByUsernameAndTenantID(username string, tenantID string) (*models.OauthUser, error) {
+	// Usernames are case insensitive
+	user := new(models.OauthUser)
+	notFound := s.db.Where("username = LOWER(?) AND tenant_id = ?", username, tenantID).
+		First(user).RecordNotFound()
+
+	// Not found
+	if notFound {
+		return nil, ErrUserNotFound
+	}
+
+	return user, nil
+}
+
 // CreateUser saves a new user to database
-func (s *Service) CreateUser(roleID, username, password string) (*models.OauthUser, error) {
-	return s.createUserCommon(s.db, roleID, username, password)
+func (s *Service) CreateUser(roleID, username, password string, tenantID string) (*models.OauthUser, error) {
+	return s.createUserCommon(s.db, roleID, username, password, tenantID)
 }
 
 // CreateUserTx saves a new user to database using injected db object
-func (s *Service) CreateUserTx(tx *gorm.DB, roleID, username, password string) (*models.OauthUser, error) {
-	return s.createUserCommon(tx, roleID, username, password)
+func (s *Service) CreateUserTx(tx *gorm.DB, roleID, username, password string, tenantID string) (*models.OauthUser, error) {
+	return s.createUserCommon(tx, roleID, username, password, tenantID)
 }
 
 // SetPassword sets a user password
@@ -76,9 +91,9 @@ func (s *Service) SetPasswordTx(tx *gorm.DB, user *models.OauthUser, password st
 }
 
 // AuthUser authenticates user
-func (s *Service) AuthUser(username, password string) (*models.OauthUser, error) {
+func (s *Service) AuthUser(username, password string, tenantID string) (*models.OauthUser, error) {
 	// Fetch the user
-	user, err := s.FindUserByUsername(username)
+	user, err := s.FindUserByUsernameAndTenantID(username, tenantID)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +125,7 @@ func (s *Service) UpdateUsernameTx(tx *gorm.DB, user *models.OauthUser, username
 	return s.updateUsernameCommon(tx, user, username)
 }
 
-func (s *Service) createUserCommon(db *gorm.DB, roleID, username, password string) (*models.OauthUser, error) {
+func (s *Service) createUserCommon(db *gorm.DB, roleID, username, password string, tenantID string) (*models.OauthUser, error) {
 	// Start with a user without a password
 	user := &models.OauthUser{
 		MyGormModel: models.MyGormModel{
@@ -134,8 +149,8 @@ func (s *Service) createUserCommon(db *gorm.DB, roleID, username, password strin
 		user.Password = util.StringOrNull(string(passwordHash))
 	}
 
-	// Check the username is available
-	if s.UserExists(user.Username) {
+	// Check the username is
+	if s.UserExists(user.Username, tenantID) {
 		return nil, ErrUsernameTaken
 	}
 

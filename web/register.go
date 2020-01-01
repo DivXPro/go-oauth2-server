@@ -31,7 +31,7 @@ func (s *Service) register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check that the submitted email hasn't been registered already
-	if s.oauthService.UserExists(r.Form.Get("email")) {
+	if s.oauthService.UserExists(r.Form.Get("username"), r.Form.Get("tenantId")) {
 		sessionService.SetFlashMessage("Email taken")
 		http.Redirect(w, r, r.RequestURI, http.StatusFound)
 		return
@@ -40,8 +40,9 @@ func (s *Service) register(w http.ResponseWriter, r *http.Request) {
 	// Create a user
 	_, err = s.oauthService.CreateUser(
 		roles.User,             // role ID
-		r.Form.Get("email"),    // username
+		r.Form.Get("username"), // username
 		r.Form.Get("password"), // password
+		r.Form.Get("tenantId"),
 	)
 	if err != nil {
 		sessionService.SetFlashMessage(err.Error())

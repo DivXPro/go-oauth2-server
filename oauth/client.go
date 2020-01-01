@@ -14,7 +14,7 @@ import (
 
 var (
 	// ErrClientNotFound ...
-	ErrClientNotFound = errors.New("Client not found")
+	ErrClientNotFound = errors.New("Client not found.")
 	// ErrInvalidClientSecret ...
 	ErrInvalidClientSecret = errors.New("Invalid client secret")
 	// ErrClientIDTaken ...
@@ -43,13 +43,13 @@ func (s *Service) FindClientByClientID(clientID string) (*models.OauthClient, er
 }
 
 // CreateClient saves a new client to database
-func (s *Service) CreateClient(clientID, secret, redirectURI string) (*models.OauthClient, error) {
-	return s.createClientCommon(s.db, clientID, secret, redirectURI)
+func (s *Service) CreateClient(clientID, secret, redirectURI string, tenantID string) (*models.OauthClient, error) {
+	return s.createClientCommon(s.db, clientID, secret, redirectURI, tenantID)
 }
 
 // CreateClientTx saves a new client to database using injected db object
-func (s *Service) CreateClientTx(tx *gorm.DB, clientID, secret, redirectURI string) (*models.OauthClient, error) {
-	return s.createClientCommon(tx, clientID, secret, redirectURI)
+func (s *Service) CreateClientTx(tx *gorm.DB, clientID, secret, redirectURI string, tenantID string) (*models.OauthClient, error) {
+	return s.createClientCommon(tx, clientID, secret, redirectURI, tenantID)
 }
 
 // AuthClient authenticates client
@@ -68,7 +68,7 @@ func (s *Service) AuthClient(clientID, secret string) (*models.OauthClient, erro
 	return client, nil
 }
 
-func (s *Service) createClientCommon(db *gorm.DB, clientID, secret, redirectURI string) (*models.OauthClient, error) {
+func (s *Service) createClientCommon(db *gorm.DB, clientID, secret, redirectURI string, tenantID string) (*models.OauthClient, error) {
 	// Check client ID
 	if s.ClientExists(clientID) {
 		return nil, ErrClientIDTaken
@@ -88,6 +88,7 @@ func (s *Service) createClientCommon(db *gorm.DB, clientID, secret, redirectURI 
 		Key:         strings.ToLower(clientID),
 		Secret:      string(secretHash),
 		RedirectURI: util.StringOrNull(redirectURI),
+		TenantID:    tenantID,
 	}
 	if err := db.Create(client).Error; err != nil {
 		return nil, err

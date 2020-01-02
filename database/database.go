@@ -2,12 +2,15 @@ package database
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/RichardKnop/go-oauth2-server/config"
+	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
 
 	// Drivers
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/lib/pq"
 )
 
@@ -77,4 +80,14 @@ func NewDatabase(cnf *config.Config) (*gorm.DB, error) {
 
 	// Database type not supported
 	return nil, fmt.Errorf("Database type %s not suppported", cnf.Database.Type)
+}
+
+func NewRedisClient(cnf *config.Config) *redis.Client {
+	redisConfig := cnf.Redis
+	client := redis.NewClient(&redis.Options{
+		Addr:     redisConfig.Host + ":" + strconv.Itoa(redisConfig.Port),
+		Password: redisConfig.Password, // no password set
+		DB:       redisConfig.DB,       // use default DB
+	})
+	return client
 }

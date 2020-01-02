@@ -3,6 +3,7 @@ package oauth
 import (
 	"github.com/RichardKnop/go-oauth2-server/config"
 	"github.com/RichardKnop/go-oauth2-server/oauth/roles"
+	"github.com/go-redis/redis/v7"
 	"github.com/jinzhu/gorm"
 )
 
@@ -10,14 +11,16 @@ import (
 type Service struct {
 	cnf          *config.Config
 	db           *gorm.DB
+	redis        *redis.Client
 	allowedRoles []string
 }
 
 // NewService returns a new Service instance
-func NewService(cnf *config.Config, db *gorm.DB) *Service {
+func NewService(cnf *config.Config, db *gorm.DB, redisClient *redis.Client) *Service {
 	return &Service{
 		cnf:          cnf,
 		db:           db,
+		redis:        redisClient,
 		allowedRoles: []string{roles.Superuser, roles.User},
 	}
 }

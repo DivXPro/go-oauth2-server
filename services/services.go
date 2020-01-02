@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/go-redis/redis/v7"
 	"reflect"
 
 	"github.com/RichardKnop/go-oauth2-server/config"
@@ -51,13 +52,13 @@ func UseSessionService(s session.ServiceInterface) {
 }
 
 // Init starts up all services
-func Init(cnf *config.Config, db *gorm.DB) error {
+func Init(cnf *config.Config, db *gorm.DB, redisClient *redis.Client) error {
 	if nil == reflect.TypeOf(HealthService) {
 		HealthService = health.NewService(db)
 	}
 
 	if nil == reflect.TypeOf(OauthService) {
-		OauthService = oauth.NewService(cnf, db)
+		OauthService = oauth.NewService(cnf, db, redisClient)
 	}
 
 	if nil == reflect.TypeOf(SessionService) {

@@ -13,14 +13,14 @@ import (
 
 // RunServer runs the app
 func RunServer(configBackend string) error {
-	cnf, db, err := initConfigDB(true, true, configBackend)
+	cnf, db, redisClient, err := initConfigDB(true, true, configBackend)
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
 	// start the services
-	if err := services.Init(cnf, db); err != nil {
+	if err := services.Init(cnf, db, redisClient); err != nil {
 		return err
 	}
 	defer services.Close()

@@ -95,6 +95,15 @@ type OauthAccessToken struct {
 	Scope     string    `sql:"type:varchar(200);not null"`
 }
 
+type OauthAccessTokenRedis struct {
+	TenantID  string
+	ClientID  string
+	UserID    string
+	Token     string
+	ExpiresAt time.Time
+	Scope     string
+}
+
 // TableName specifies table name
 func (at *OauthAccessToken) TableName() string {
 	return "oauth_access_tokens"

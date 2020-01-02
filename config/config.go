@@ -33,9 +33,17 @@ type SessionConfig struct {
 	HTTPOnly bool
 }
 
+type RedisConfig struct {
+	Host     string
+	Port     int
+	DB       int
+	Password string
+}
+
 // Config stores all configuration options
 type Config struct {
 	Database      DatabaseConfig
+	Redis         RedisConfig
 	Oauth         OauthConfig
 	Session       SessionConfig
 	IsDevelopment bool

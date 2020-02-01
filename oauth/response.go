@@ -40,3 +40,10 @@ func NewAccessTokenResponse(accessToken *models.OauthAccessToken, refreshToken *
 	}
 	return response, nil
 }
+
+func NewJWTResponse(jwk string, lifetime int, theTokenType string, scope string) *AccessTokenResponse {
+	response := &AccessTokenResponse{
+		AccessToken: jwk,
+	}
+	return response
+}

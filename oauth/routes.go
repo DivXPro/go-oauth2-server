@@ -10,6 +10,7 @@ const (
 	tokensPath         = "/" + tokensResource
 	introspectResource = "introspect"
 	introspectPath     = "/" + introspectResource
+	jwksPath           = "/.well-known/jwks.json"
 )
 
 // RegisterRoutes registers route handlers for the oauth service
@@ -32,6 +33,12 @@ func (s *Service) GetRoutes() []routes.Route {
 			Method:      "POST",
 			Pattern:     introspectPath,
 			HandlerFunc: s.introspectHandler,
+		},
+		{
+			Name:        "jwks",
+			Method:      "GET",
+			Pattern:     jwksPath,
+			HandlerFunc: s.jwksHandler,
 		},
 	}
 }

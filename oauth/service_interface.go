@@ -7,6 +7,7 @@ import (
 	"github.com/RichardKnop/go-oauth2-server/util/routes"
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
+	"gopkg.in/square/go-jose.v2"
 )
 
 // ServiceInterface defines exported methods
@@ -45,4 +46,5 @@ type ServiceInterface interface {
 	NewIntrospectResponseFromRefreshToken(refreshToken *models.OauthRefreshToken) (*IntrospectResponse, error)
 	ClearUserTokens(userSession *session.UserSession)
 	Close()
+	JWKs() (*jose.JSONWebKeySet, error)
 }

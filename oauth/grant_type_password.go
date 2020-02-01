@@ -27,7 +27,22 @@ func (s *Service) passwordGrant(r *http.Request, client *models.OauthClient) (*A
 		return nil, ErrInvalidUsernameOrPassword
 	}
 
+	// jwt mode
+	if s.cnf.Oauth.Jwt {
+		jwt, err := s.GrantJWT(user, s.cnf.Oauth.AccessTokenLifetime, scope)
+		if err != nil {
+			return nil, err
+		}
+		accessTokenResponse := NewJWTResponse(
+			jwt,
+			s.cnf.Oauth.AccessTokenLifetime,
+			tokentypes.Bearer,
+			scope,
+		)
+		return accessTokenResponse, nil
+	}
 	// Log in the user
+	// oauth access token
 	accessToken, refreshToken, err := s.Login(client, user, scope)
 	if err != nil {
 		return nil, err

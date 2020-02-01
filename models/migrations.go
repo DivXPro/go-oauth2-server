@@ -13,6 +13,10 @@ var (
 			Name:     "initial",
 			Function: migrate0001,
 		},
+		{
+			Name:     "jwkInitial",
+			Function: jwk0001,
+		},
 	}
 )
 
@@ -105,5 +109,12 @@ func migrate0001(db *gorm.DB, name string) error {
 			"oauth_authorization_codes.user_id for oauth_users(id): %s", err)
 	}
 
+	return nil
+}
+
+func jwk0001(db *gorm.DB, name string) error {
+	if err := db.CreateTable(new(OauthJwk)).Error; err != nil {
+		return fmt.Errorf("Error creating oauth_jwk table: %s", err)
+	}
 	return nil
 }

@@ -11,7 +11,6 @@ func (s *Service) Login(client *models.OauthClient, user *models.OauthUser, scop
 		// For security reasons, return a general error message
 		return nil, nil, ErrInvalidUsernameOrPassword
 	}
-
 	// Create a new access token
 	accessToken, err := s.GrantAccessToken(
 		client,

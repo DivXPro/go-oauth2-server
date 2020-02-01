@@ -90,7 +90,7 @@ type OauthAccessToken struct {
 	UserID    sql.NullString `sql:"index"`
 	Client    *OauthClient
 	User      *OauthUser
-	Token     string    `sql:"type:varchar(40);unique;not null"`
+	Token     string    `sql:"type:varchar(10240);unique;not null"`
 	ExpiresAt time.Time `sql:"not null"`
 	Scope     string    `sql:"type:varchar(200);not null"`
 }

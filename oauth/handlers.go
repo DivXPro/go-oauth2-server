@@ -95,3 +95,11 @@ func (s *Service) basicAuthClient(r *http.Request) (*models.OauthClient, error) 
 
 	return client, nil
 }
+
+func (s *Service) jwksHandler(w http.ResponseWriter, r *http.Request) {
+	if jwks, err := s.JWKs(); err != nil {
+		response.Error(w, err.Error(), getErrStatusCode(err))
+	} else {
+		response.WriteJSON(w, jwks, 200)
+	}
+}

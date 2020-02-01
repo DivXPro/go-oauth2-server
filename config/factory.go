@@ -31,6 +31,7 @@ var Cnf = &Config{
 		AccessTokenLifetime:  3600,    // 1 hour
 		RefreshTokenLifetime: 1209600, // 14 days
 		AuthCodeLifetime:     3600,    // 1 hour
+		Jwt:                  false,   // unable jwt
 	},
 	Session: SessionConfig{
 		Secret:   "test_secret",

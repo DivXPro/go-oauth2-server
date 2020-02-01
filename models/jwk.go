@@ -6,8 +6,9 @@ import (
 )
 
 type OauthJwk struct {
-	SID       string    `gorm:"column:sid; type:varchar(255); primary_key"`
-	KID       string    `gorm:"column:kid; type:varchar(255); unique; not null"`
+	ID        string    `gorm:"column:id; type:int(10); primary_key"`
+	SID       string    `gorm:"column:sid; type:varchar(255)"`
+	KID       string    `gorm:"column:kid; type:varchar(255)"`
 	KeyData   string    `gorm:"column:key_data; type:text; not null"`
 	CreatedAt time.Time `gorm:"column:created_at"`
 }

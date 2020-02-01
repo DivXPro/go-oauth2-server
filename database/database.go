@@ -49,7 +49,6 @@ func NewDatabase(cnf *config.Config) (*gorm.DB, error) {
 
 		// Database logging
 		db.LogMode(cnf.IsDevelopment)
-
 		return db, nil
 	} else if cnf.Database.Type == "mysql" {
 		args := fmt.Sprintf(

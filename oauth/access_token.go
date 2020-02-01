@@ -47,7 +47,7 @@ func (s *Service) GrantJWT(user *models.OauthUser, expiresIn int, scope string) 
 
 func (s *Service) getJWKPrivateKey() (*jose.JSONWebKey, error) {
 	var oauthJwks []models.OauthJwk
-	notFound := models.OauthJWKPreload(s.db).Where("sid = ?", "oauth-jwk").Find(&oauthJwks).RecordNotFound()
+	notFound := s.db.Where("sid = ?", "oauth-jwk").Find(&oauthJwks).RecordNotFound()
 	// Not found
 	if notFound {
 		return nil, ErrJwkPrivateKeyNotFound
@@ -75,13 +75,14 @@ func (s *Service) JWKs() (*jose.JSONWebKeySet, error) {
 
 func (s *Service) getJWKPublicKey() (*jose.JSONWebKey, error) {
 	var oauthJwks []models.OauthJwk
-	notFound := models.OauthJWKPreload(s.db).Where("sid = ?", "oauth-jwk").Find(&oauthJwks).RecordNotFound()
+	notFound := s.db.Where("sid = ?", "oauth-jwk").Find(&oauthJwks).RecordNotFound()
+
 	// Not found
 	if notFound {
 		return nil, ErrJwkPublicKeyNotFound
 	}
 	for _, oauthJwk := range oauthJwks {
-		if oauthJwk.KID[0:7] == "public" {
+		if oauthJwk.KID[0:6] == "public" {
 			data := []byte(oauthJwk.KeyData)
 			var key = &jose.JSONWebKey{}
 			if err := key.UnmarshalJSON(data); err != nil {

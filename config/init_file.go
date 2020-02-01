@@ -36,6 +36,8 @@ func (b *initFileBackend) LoadConfig() (*Config, error) {
 	newCnf.Database.User = cfg.Section("database").Key("user").String()
 	newCnf.Database.Password = cfg.Section("database").Key("password").String()
 	newCnf.Database.DatabaseName = cfg.Section("database").Key("name").String()
+
+	newCnf.IsDevelopment, _ = cfg.Section("option").Key("debug").Bool()
 	return newCnf, nil
 }
 

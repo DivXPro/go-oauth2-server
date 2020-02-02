@@ -31,6 +31,7 @@ func (s *Service) clientCredentialsGrant(r *http.Request, client *models.OauthCl
 		nil, // refresh token
 		s.cnf.Oauth.AccessTokenLifetime,
 		tokentypes.Bearer,
+		"",
 	)
 	if err != nil {
 		return nil, err

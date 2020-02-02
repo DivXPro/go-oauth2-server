@@ -32,15 +32,20 @@ func (s *Service) tokensHandler(w http.ResponseWriter, r *http.Request) {
 		"refresh_token":      s.refreshTokenGrant,
 	}
 
+	err := r.ParseForm()
+	if err != nil {
+		response.Error(w, ErrInvalidGrantType.Error(), http.StatusBadRequest)
+		return
+	}
 	// Check the grant type
-	grantHandler, ok := grantTypes[r.Form.Get("grant_type")]
+	grantHandler, ok := grantTypes[r.PostFormValue("grant_type")]
 	if !ok {
 		response.Error(w, ErrInvalidGrantType.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Client auth
-	client, err := s.basicAuthClient(r)
+	client, err := s.GetClient(r.PostFormValue("client_id"))
 	if err != nil {
 		response.UnauthorizedError(w, err.Error())
 		return

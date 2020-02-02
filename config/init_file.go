@@ -38,6 +38,8 @@ func (b *initFileBackend) LoadConfig() (*Config, error) {
 	newCnf.Database.DatabaseName = cfg.Section("database").Key("name").String()
 
 	newCnf.IsDevelopment, _ = cfg.Section("option").Key("debug").Bool()
+	newCnf.Port, _ = cfg.Section("option").Key("port").Int()
+	newCnf.Oauth.Jwt, _ = cfg.Section("option").Key("jwt").Bool()
 	return newCnf, nil
 }
 

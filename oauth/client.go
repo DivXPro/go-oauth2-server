@@ -31,7 +31,7 @@ func (s *Service) ClientExists(clientID string) bool {
 func (s *Service) FindClientByClientID(clientID string) (*models.OauthClient, error) {
 	// Client IDs are case insensitive
 	client := new(models.OauthClient)
-	notFound := s.db.Where("key = LOWER(?)", clientID).
+	notFound := s.db.Where("`key` = LOWER(?)", clientID).
 		First(client).RecordNotFound()
 
 	// Not found
@@ -63,6 +63,16 @@ func (s *Service) AuthClient(clientID, secret string) (*models.OauthClient, erro
 	// Verify the secret
 	if password.VerifyPassword(client.Secret, secret) != nil {
 		return nil, ErrInvalidClientSecret
+	}
+
+	return client, nil
+}
+
+func (s *Service) GetClient(clientID string) (*models.OauthClient, error) {
+	// Fetch the client
+	client, err := s.FindClientByClientID(clientID)
+	if err != nil {
+		return nil, ErrClientNotFound
 	}
 
 	return client, nil

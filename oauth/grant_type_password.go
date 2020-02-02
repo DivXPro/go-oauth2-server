@@ -15,37 +15,31 @@ var (
 
 func (s *Service) passwordGrant(r *http.Request, client *models.OauthClient) (*AccessTokenResponse, error) {
 	// Get the scope string
-	scope, err := s.GetScope(r.Form.Get("scope"))
+	scope, err := s.GetScope(r.PostFormValue("scope"))
 	if err != nil {
 		return nil, err
 	}
 
 	// Authenticate the user
-	user, err := s.AuthUser(r.Form.Get("username"), r.Form.Get("password"), r.Form.Get("tenantId"))
+	user, err := s.AuthUser(r.PostFormValue("username"), r.PostFormValue("password"), r.PostFormValue("tenant_id"))
 	if err != nil {
 		// For security reasons, return a general error message
 		return nil, ErrInvalidUsernameOrPassword
 	}
 
-	// jwt mode
-	if s.cnf.Oauth.Jwt {
-		jwt, err := s.GrantJWT(user, s.cnf.Oauth.AccessTokenLifetime, scope)
-		if err != nil {
-			return nil, err
-		}
-		accessTokenResponse := NewJWTResponse(
-			jwt,
-			s.cnf.Oauth.AccessTokenLifetime,
-			tokentypes.Bearer,
-			scope,
-		)
-		return accessTokenResponse, nil
-	}
 	// Log in the user
 	// oauth access token
 	accessToken, refreshToken, err := s.Login(client, user, scope)
 	if err != nil {
 		return nil, err
+	}
+
+	var jwt string
+	if s.cnf.Oauth.Jwt {
+		jwt, err = s.GrantJWT(user, s.cnf.Oauth.AccessTokenLifetime, scope, accessToken.Token)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// Create response
@@ -54,10 +48,10 @@ func (s *Service) passwordGrant(r *http.Request, client *models.OauthClient) (*A
 		refreshToken,
 		s.cnf.Oauth.AccessTokenLifetime,
 		tokentypes.Bearer,
+		jwt,
 	)
 	if err != nil {
 		return nil, err
 	}
-
 	return accessTokenResponse, nil
 }

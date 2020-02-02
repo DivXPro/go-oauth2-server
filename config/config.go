@@ -48,4 +48,5 @@ type Config struct {
 	Oauth         OauthConfig
 	Session       SessionConfig
 	IsDevelopment bool
+	Port          int
 }

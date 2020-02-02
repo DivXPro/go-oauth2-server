@@ -36,6 +36,7 @@ func (s *Service) refreshTokenGrant(r *http.Request, client *models.OauthClient)
 		refreshToken,
 		s.cnf.Oauth.AccessTokenLifetime,
 		tokentypes.Bearer,
+		"",
 	)
 	if err != nil {
 		return nil, err

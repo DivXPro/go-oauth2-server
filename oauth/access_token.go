@@ -3,7 +3,6 @@ package oauth
 import (
 	"crypto/rsa"
 	"github.com/RichardKnop/go-oauth2-server/oauth/jwt"
-	"github.com/RichardKnop/uuid"
 	"gopkg.in/square/go-jose.v2"
 	jwt2 "gopkg.in/square/go-jose.v2/jwt"
 	"time"
@@ -19,12 +18,12 @@ var (
 	ErrJwkPublicKeyNotFound = errors.New("jwk public key not found")
 )
 
-func (s *Service) GrantJWT(user *models.OauthUser, expiresIn int, scope string) (string, error) {
+func (s *Service) GrantJWT(user *models.OauthUser, expiresIn int, scope string, accessToken string) (string, error) {
 	if privateJwk, err := s.getJWKPrivateKey(); err != nil {
 		return "", err
 	} else {
 		// get jwt private key
-		privateKey := privateJwk.Key.(rsa.PrivateKey)
+		privateKey := privateJwk.Key.(*rsa.PrivateKey)
 
 		issueAt := jwt2.NumericDate(time.Now().Unix())
 		notBefore := jwt2.NumericDate(time.Now().Unix())
@@ -33,7 +32,7 @@ func (s *Service) GrantJWT(user *models.OauthUser, expiresIn int, scope string) 
 		var claims = &jwt.StandardClaims{
 			Claims: jwt2.Claims{
 				Expiry:    &expiry,
-				ID:        uuid.New(),
+				ID:        accessToken,
 				IssuedAt:  &issueAt,
 				Issuer:    "",
 				NotBefore: &notBefore,
@@ -41,7 +40,7 @@ func (s *Service) GrantJWT(user *models.OauthUser, expiresIn int, scope string) 
 			},
 			Scope: scope,
 		}
-		return jwt.MakeRSASignedJWT(claims, &privateKey)
+		return jwt.MakeRSASignedJWT(claims, privateKey)
 	}
 }
 

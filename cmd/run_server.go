@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/RichardKnop/go-oauth2-server/services"
@@ -43,8 +45,11 @@ func RunServer(configBackend string) error {
 	// Set the router
 	app.UseHandler(router)
 
+	port := strconv.Itoa(cnf.Port)
+	addr := ":" + port
+	fmt.Println(addr)
 	// Run the server on port 8080, gracefully stop on SIGTERM signal
-	graceful.Run(":8080", 5*time.Second, app)
+	graceful.Run(addr, 5*time.Second, app)
 
 	return nil
 }

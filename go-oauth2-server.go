@@ -24,7 +24,7 @@ func init() {
 	cliApp.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:        "configBackend",
-			Value:       "etcd",
+			Value:       "file",
 			Destination: &configBackend,
 		},
 	}

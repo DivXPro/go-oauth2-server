@@ -43,6 +43,7 @@ func (s *Service) authorizationCodeGrant(r *http.Request, client *models.OauthCl
 		refreshToken,
 		s.cnf.Oauth.AccessTokenLifetime,
 		tokentypes.Bearer,
+		"",
 	)
 	if err != nil {
 		return nil, err

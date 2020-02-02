@@ -39,7 +39,10 @@ func (b *initFileBackend) LoadConfig() (*Config, error) {
 
 	newCnf.IsDevelopment, _ = cfg.Section("option").Key("debug").Bool()
 	newCnf.Port, _ = cfg.Section("option").Key("port").Int()
-	newCnf.Oauth.Jwt, _ = cfg.Section("option").Key("jwt").Bool()
+
+	newCnf.Oauth.Jwt, _ = cfg.Section("oauth").Key("jwt").Bool()
+	newCnf.Oauth.Issuer = cfg.Section("oauth").Key("issuer").String()
+
 	return newCnf, nil
 }
 

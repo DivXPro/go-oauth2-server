@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"errors"
+	"gopkg.in/square/go-jose.v2/jwt"
 	"net/http"
 
 	"github.com/RichardKnop/go-oauth2-server/models"
@@ -13,6 +14,8 @@ const (
 	AccessTokenHint = "access_token"
 	// RefreshTokenHint ...
 	RefreshTokenHint = "refresh_token"
+	// Jwt
+	JwtHint = "jwt"
 )
 
 var (
@@ -55,6 +58,24 @@ func (s *Service) introspectToken(r *http.Request, client *models.OauthClient) (
 			return nil, err
 		}
 		return s.NewIntrospectResponseFromRefreshToken(refreshToken)
+	case JwtHint:
+		jwt, err := jwt.ParseSigned(token)
+		if err != nil {
+			return nil, err
+		}
+		publicKey, err := s.getJWKPublicKey()
+		if err != nil {
+			return nil, err
+		}
+		jsonWebToken := make(map[string]interface{})
+		if err := jwt.Claims(publicKey, &jsonWebToken); err != nil {
+			return nil, err
+		}
+		accessToken, err := s.Authenticate(jsonWebToken["jti"].(string))
+		if err != nil {
+			return nil, err
+		}
+		return s.NewIntrospectResponseFromAccessToken(accessToken)
 	default:
 		return nil, ErrTokenHintInvalid
 	}

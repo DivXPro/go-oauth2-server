@@ -18,6 +18,7 @@ type OauthConfig struct {
 	RefreshTokenLifetime int
 	AuthCodeLifetime     int
 	Jwt                  bool
+	Issuer               string
 }
 
 // SessionConfig stores session configuration for the web app

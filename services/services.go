@@ -8,7 +8,6 @@ import (
 	"github.com/RichardKnop/go-oauth2-server/health"
 	"github.com/RichardKnop/go-oauth2-server/oauth"
 	"github.com/RichardKnop/go-oauth2-server/session"
-	"github.com/RichardKnop/go-oauth2-server/web"
 	"github.com/gorilla/sessions"
 	"github.com/jinzhu/gorm"
 )
@@ -24,9 +23,6 @@ var (
 	// OauthService ...
 	OauthService oauth.ServiceInterface
 
-	// WebService ...
-	WebService web.ServiceInterface
-
 	// SessionService ...
 	SessionService session.ServiceInterface
 )
@@ -39,11 +35,6 @@ func UseHealthService(h health.ServiceInterface) {
 // UseOauthService sets the oAuth service
 func UseOauthService(o oauth.ServiceInterface) {
 	OauthService = o
-}
-
-// UseWebService sets the web service
-func UseWebService(w web.ServiceInterface) {
-	WebService = w
 }
 
 // UseSessionService sets the session service
@@ -66,10 +57,6 @@ func Init(cnf *config.Config, db *gorm.DB, redisClient *redis.Client) error {
 		SessionService = session.NewService(cnf, sessions.NewCookieStore([]byte(cnf.Session.Secret)))
 	}
 
-	if nil == reflect.TypeOf(WebService) {
-		WebService = web.NewService(cnf, OauthService, SessionService)
-	}
-
 	return nil
 }
 
@@ -77,6 +64,5 @@ func Init(cnf *config.Config, db *gorm.DB, redisClient *redis.Client) error {
 func Close() {
 	HealthService.Close()
 	OauthService.Close()
-	WebService.Close()
 	SessionService.Close()
 }

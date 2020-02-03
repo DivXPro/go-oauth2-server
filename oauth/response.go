@@ -19,7 +19,9 @@ type IntrospectResponse struct {
 	Active    bool   `json:"active"`
 	Scope     string `json:"scope,omitempty"`
 	ClientID  string `json:"client_id,omitempty"`
-	Username  string `json:"username,omitempty"`
+	Name      string `json:"name,omitempty"`
+	UserID    string `json:"user_id,omitempty"`
+	TenantID  string `json:"tenant_id,omitempty"`
 	TokenType string `json:"token_type,omitempty"`
 	ExpiresAt int    `json:"exp,omitempty"`
 }

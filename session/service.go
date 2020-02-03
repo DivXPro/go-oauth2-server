@@ -21,7 +21,8 @@ type Service struct {
 // UserSession has user data stored in a session after logging in
 type UserSession struct {
 	ClientID     string
-	Username     string
+	Account      string
+	TenantID     string
 	AccessToken  string
 	RefreshToken string
 }

@@ -30,20 +30,5 @@ func (s *Service) GetConfig() *config.Config {
 	return s.cnf
 }
 
-// RestrictToRoles restricts this service to only specified roles
-func (s *Service) RestrictToRoles(allowedRoles ...string) {
-	s.allowedRoles = allowedRoles
-}
-
-// IsRoleAllowed returns true if the role is allowed to use this service
-func (s *Service) IsRoleAllowed(role string) bool {
-	for _, allowedRole := range s.allowedRoles {
-		if role == allowedRole {
-			return true
-		}
-	}
-	return false
-}
-
 // Close stops any running services
 func (s *Service) Close() {}

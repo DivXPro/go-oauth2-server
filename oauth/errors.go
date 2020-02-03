@@ -21,6 +21,7 @@ var (
 		ErrTokenMissing:                  http.StatusBadRequest,
 		ErrTokenHintInvalid:              http.StatusBadRequest,
 		ErrInvalidUsernameOrPassword:     http.StatusUnauthorized,
+		ErrInvalidToken:                  http.StatusUnauthorized,
 	}
 )
 

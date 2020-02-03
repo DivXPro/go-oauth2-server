@@ -10,6 +10,7 @@ const (
 	tokensPath         = "/" + tokensResource
 	introspectResource = "introspect"
 	introspectPath     = "/" + introspectResource
+	revokePath         = "revoke"
 	jwksPath           = "/.well-known/jwks.json"
 )
 
@@ -33,6 +34,12 @@ func (s *Service) GetRoutes() []routes.Route {
 			Method:      "POST",
 			Pattern:     introspectPath,
 			HandlerFunc: s.introspectHandler,
+		},
+		{
+			Name:        "revoke",
+			Method:      "POST",
+			Pattern:     revokePath,
+			HandlerFunc: s.revokeHandler,
 		},
 		{
 			Name:        "jwks",

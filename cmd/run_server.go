@@ -40,7 +40,8 @@ func RunServer(configBackend string) error {
 	// Add routes
 	services.HealthService.RegisterRoutes(router, "/v1")
 	services.OauthService.RegisterRoutes(router, "/v1/oauth")
-	services.WebService.RegisterRoutes(router, "/web")
+	// 暂时禁止web上的操作
+	//services.WebService.RegisterRoutes(router, "/web")
 
 	// Set the router
 	app.UseHandler(router)

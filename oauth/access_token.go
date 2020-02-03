@@ -16,6 +16,8 @@ var (
 	ErrJwkPrivateKeyNotFound = errors.New("jwk private key not found")
 	// ErrJwkPublicKeyNotFound ...
 	ErrJwkPublicKeyNotFound = errors.New("jwk public key not found")
+	// ErrInvalidToken ...
+	ErrInvalidToken = errors.New("invalid token")
 )
 
 func (s *Service) GrantJWT(user *models.OauthUser, expiresIn int, scope string, accessToken string) (string, error) {
@@ -145,6 +147,25 @@ func (s *Service) GrantAccessTokenRedis(accessToken *models.OauthAccessToken) (*
 		return nil, err
 	}
 	return accessTokenRedis, nil
+}
+
+func (s *Service) revokeToken(token string) error {
+	accessToken := &models.OauthAccessToken{}
+	notFound := s.db.Where("id = ?", token).First(accessToken).RecordNotFound()
+	if notFound {
+		freshToken := &models.OauthRefreshToken{}
+		notFound = s.db.Where("id = ?", token).First(accessToken).RecordNotFound()
+		if notFound {
+			return ErrTokenMissing
+		}
+		s.db.Where("id = ?", freshToken.ID).Delete(models.OauthRefreshToken{})
+		return nil
+	}
+	if err := s.RemoveAccessTokenRedis(token); err != nil {
+		return err
+	}
+	s.db.Where("id = ?", accessToken.ID).Delete(models.OauthAccessToken{})
+	return nil
 }
 
 func (s *Service) RemoveAccessTokenRedis(token string) error {

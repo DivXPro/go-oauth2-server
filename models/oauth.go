@@ -51,17 +51,19 @@ func (r *OauthRole) TableName() string {
 
 // OauthUser ...
 type OauthUser struct {
-	MyGormModel
-	RoleID   sql.NullString `sql:"type:varchar(32);index;not null"`
-	Role     *OauthRole
-	Username string         `sql:"type:varchar(254);unique;not null"`
-	Password sql.NullString `sql:"type:varchar(60)"`
-	TenantID string         `sql:"type varchar(32);not null"`
+	ID        string         `gorm:"column:id;varchar(32);primary_key"`
+	Name      string         `gorm:"type:varchar(255);unique;not null"`
+	Password  sql.NullString `gorm:"type:varchar(255)"`
+	TenantID  string         `gorm:"column:group_id;type varchar(32);not null"`
+	Phone     string         `gorm:"type varchar(11)"`
+	Account   string         `gorm:"type varchar(32)"`
+	CreatedAt time.Time      `gorm:"column:created_at"`
+	UpdatedAt time.Time      `gorm:"column:updated"`
 }
 
 // TableName specifies table name
 func (u *OauthUser) TableName() string {
-	return "oauth_users"
+	return "user"
 }
 
 // OauthRefreshToken ...

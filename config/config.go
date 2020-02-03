@@ -19,6 +19,8 @@ type OauthConfig struct {
 	AuthCodeLifetime     int
 	Jwt                  bool
 	Issuer               string
+	PasswordSalt         string
+	PasswordSecret       string
 }
 
 // SessionConfig stores session configuration for the web app

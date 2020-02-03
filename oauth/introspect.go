@@ -107,7 +107,9 @@ func (s *Service) NewIntrospectResponseFromAccessToken(accessToken *models.Oauth
 		if notFound {
 			return nil, ErrUserNotFound
 		}
-		introspectResponse.Username = user.Username
+		introspectResponse.Name = user.Name
+		introspectResponse.UserID = user.ID
+		introspectResponse.TenantID = user.TenantID
 	}
 
 	return introspectResponse, nil
@@ -139,7 +141,9 @@ func (s *Service) NewIntrospectResponseFromRefreshToken(refreshToken *models.Oau
 		if notFound {
 			return nil, ErrUserNotFound
 		}
-		introspectResponse.Username = user.Username
+		introspectResponse.Name = user.Name
+		introspectResponse.UserID = user.ID
+		introspectResponse.TenantID = user.TenantID
 	}
 
 	return introspectResponse, nil

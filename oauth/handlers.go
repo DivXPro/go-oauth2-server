@@ -83,6 +83,17 @@ func (s *Service) introspectHandler(w http.ResponseWriter, r *http.Request) {
 	response.WriteJSON(w, resp, 200)
 }
 
+// logout handles
+// (POST /v1/oauth/revoke)
+func (s *Service) revokeHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	token := r.PostFormValue("token")
+	if err := s.revokeToken(token); err != nil {
+		response.WriteJSON(w, err.Error(), getErrStatusCode(err))
+	}
+	response.WriteJSON(w, nil, 200)
+}
+
 // Get client credentials from basic auth and try to authenticate client
 func (s *Service) basicAuthClient(r *http.Request) (*models.OauthClient, error) {
 	// Get client credentials from basic auth

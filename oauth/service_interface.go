@@ -14,9 +14,6 @@ import (
 type ServiceInterface interface {
 	// Exported methods
 	GetConfig() *config.Config
-	RestrictToRoles(allowedRoles ...string)
-	IsRoleAllowed(role string) bool
-	FindRoleByID(id string) (*models.OauthRole, error)
 	GetRoutes() []routes.Route
 	RegisterRoutes(router *mux.Router, prefix string)
 	ClientExists(clientID string) bool
@@ -26,12 +23,8 @@ type ServiceInterface interface {
 	AuthClient(clientID, secret string) (*models.OauthClient, error)
 	UserExists(username string, tenantID string) bool
 	FindUserByUsername(username string) (*models.OauthUser, error)
-	CreateUser(roleID, username, password string, tenantID string) (*models.OauthUser, error)
-	CreateUserTx(tx *gorm.DB, roleID, username, password string, tenantID string) (*models.OauthUser, error)
-	SetPassword(user *models.OauthUser, password string) error
-	SetPasswordTx(tx *gorm.DB, user *models.OauthUser, password string) error
-	UpdateUsername(user *models.OauthUser, username string) error
-	UpdateUsernameTx(db *gorm.DB, user *models.OauthUser, username string) error
+	FindUserByAccountAndTenantID(account string, tenantID string) (*models.OauthUser, error)
+	FindUserByPhoneAndTenantID(phone string, tenantID string) (*models.OauthUser, error)
 	AuthUser(username, thePassword string, tenantID string) (*models.OauthUser, error)
 	GetScope(requestedScope string) (string, error)
 	GetDefaultScope() string

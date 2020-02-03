@@ -1,7 +1,9 @@
 package oauth
 
 import (
+	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/RichardKnop/go-oauth2-server/models"
@@ -15,44 +17,65 @@ var (
 	ErrInvalidClientIDOrSecret = errors.New("Invalid client ID or secret")
 )
 
+type GrantDTO struct {
+	GrantType    string `json:"grant_type"`
+	Password     string
+	Username     string
+	TenantID     string `json:"tenant_id"`
+	ClientID     string `json:"client_id"`
+	Secret       string
+	Scope        string
+	Code         string
+	RedirectURI  string `json:"redirect_uri"`
+	RefreshToken string `json:"refresh_token"`
+}
+
 // tokensHandler handles all OAuth 2.0 grant types
 // (POST /v1/oauth/tokens)
 func (s *Service) tokensHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the form so r.Form becomes available
-	if err := r.ParseForm(); err != nil {
-		response.Error(w, err.Error(), http.StatusInternalServerError)
+	//if err := r.ParseForm(); err != nil {
+	//	response.Error(w, err.Error(), http.StatusInternalServerError)
+	//	return
+	//}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		response.Error(w, err.Error(), getErrStatusCode(err))
+		return
+	}
+	var grantDTO GrantDTO
+	if err = json.Unmarshal(body, &grantDTO); err != nil {
+		response.Error(w, err.Error(), getErrStatusCode(err))
 		return
 	}
 
+	grantType := grantDTO.GrantType
+
 	// Map of grant types against handler functions
-	grantTypes := map[string]func(r *http.Request, client *models.OauthClient) (*AccessTokenResponse, error){
+	grantTypes := map[string]func(grantDTO *GrantDTO, client *models.OauthClient) (*AccessTokenResponse, error){
 		"authorization_code": s.authorizationCodeGrant,
 		"password":           s.passwordGrant,
 		"client_credentials": s.clientCredentialsGrant,
 		"refresh_token":      s.refreshTokenGrant,
 	}
 
-	err := r.ParseForm()
-	if err != nil {
-		response.Error(w, ErrInvalidGrantType.Error(), http.StatusBadRequest)
-		return
-	}
 	// Check the grant type
-	grantHandler, ok := grantTypes[r.PostFormValue("grant_type")]
+	grantHandler, ok := grantTypes[grantType]
 	if !ok {
 		response.Error(w, ErrInvalidGrantType.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Client auth
-	client, err := s.GetClient(r.PostFormValue("client_id"))
+	client, err := s.GetClient(grantDTO.ClientID)
 	if err != nil {
 		response.UnauthorizedError(w, err.Error())
 		return
 	}
 
 	// Grant processing
-	resp, err := grantHandler(r, client)
+	resp, err := grantHandler(&grantDTO, client)
 	if err != nil {
 		response.Error(w, err.Error(), getErrStatusCode(err))
 		return

@@ -19,7 +19,8 @@ func HashPassword(password string) ([]byte, error) {
 }
 
 func VerifyPassword2(passwordHash, password string, userID string, secret string, salt string) bool {
-	return passwordHash == HashPassword2(password, userID, secret, salt)
+	hashPassword := HashPassword2(password, userID, secret, salt)
+	return passwordHash == hashPassword
 }
 
 func HashPassword2(password string, userID string, secret string, salt string) string {

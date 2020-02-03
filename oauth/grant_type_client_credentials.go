@@ -1,15 +1,13 @@
 package oauth
 
 import (
-	"net/http"
-
 	"github.com/RichardKnop/go-oauth2-server/models"
 	"github.com/RichardKnop/go-oauth2-server/oauth/tokentypes"
 )
 
-func (s *Service) clientCredentialsGrant(r *http.Request, client *models.OauthClient) (*AccessTokenResponse, error) {
+func (s *Service) clientCredentialsGrant(grantDTO *GrantDTO, client *models.OauthClient) (*AccessTokenResponse, error) {
 	// Get the scope string
-	scope, err := s.GetScope(r.Form.Get("scope"))
+	scope, err := s.GetScope(grantDTO.Scope)
 	if err != nil {
 		return nil, err
 	}

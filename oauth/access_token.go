@@ -156,7 +156,7 @@ func (s *Service) revokeToken(token string) error {
 		freshToken := &models.OauthRefreshToken{}
 		notFound = s.db.Where("id = ?", token).First(accessToken).RecordNotFound()
 		if notFound {
-			return ErrTokenMissing
+			return ErrInvalidToken
 		}
 		s.db.Where("id = ?", freshToken.ID).Delete(models.OauthRefreshToken{})
 		return nil

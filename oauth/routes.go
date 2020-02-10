@@ -6,11 +6,11 @@ import (
 )
 
 const (
-	tokensResource     = "tokens"
-	tokensPath         = "/" + tokensResource
+	tokenResource     = "token"
+	tokensPath         = "/" + tokenResource
 	introspectResource = "introspect"
 	introspectPath     = "/" + introspectResource
-	revokePath         = "revoke"
+	revokePath         = "/revoke"
 	jwksPath           = "/.well-known/jwks.json"
 )
 
@@ -24,7 +24,7 @@ func (s *Service) RegisterRoutes(router *mux.Router, prefix string) {
 func (s *Service) GetRoutes() []routes.Route {
 	return []routes.Route{
 		{
-			Name:        "oauth_tokens",
+			Name:        "oauth_token",
 			Method:      "POST",
 			Pattern:     tokensPath,
 			HandlerFunc: s.tokensHandler,

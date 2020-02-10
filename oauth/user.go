@@ -117,7 +117,7 @@ func (s *Service) AuthUser(username, password string, tenantID string) (*models.
 		user.ID,
 		s.cnf.Oauth.PasswordSecret,
 		s.cnf.Oauth.PasswordSalt,
-	) {
+	) == false {
 		return nil, ErrInvalidUserPassword
 	}
 

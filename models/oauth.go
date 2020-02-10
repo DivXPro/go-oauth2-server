@@ -54,7 +54,7 @@ type OauthUser struct {
 	ID        string         `gorm:"column:id;varchar(32);primary_key"`
 	Name      string         `gorm:"type:varchar(255);unique;not null"`
 	Password  sql.NullString `gorm:"type:varchar(255)"`
-	TenantID  string         `gorm:"column:group_id;type varchar(32);not null"`
+	TenantID  string         `gorm:"column:tenant_id;type varchar(32);not null"`
 	Phone     string         `gorm:"type varchar(11)"`
 	Account   string         `gorm:"type varchar(32)"`
 	CreatedAt time.Time      `gorm:"column:created_at"`

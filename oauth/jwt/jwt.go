@@ -11,7 +11,6 @@ func MakeRSASignedJWT(claims interface{}, key *rsa.PrivateKey) (string, error) {
 	if err != nil {
 		panic(err)
 	}
-
 	raw, err := jwt.Signed(signer).Claims(claims).CompactSerialize()
 	if err != nil {
 		return "", err

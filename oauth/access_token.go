@@ -3,8 +3,9 @@ package oauth
 import (
 	"crypto/rsa"
 	"github.com/RichardKnop/go-oauth2-server/oauth/jwt"
+	jwtgo "github.com/dgrijalva/jwt-go"
 	"gopkg.in/square/go-jose.v2"
-	jwt2 "gopkg.in/square/go-jose.v2/jwt"
+	"log"
 	"time"
 
 	"errors"
@@ -26,23 +27,27 @@ func (s *Service) GrantJWT(user *models.OauthUser, expiresIn int, scope string, 
 	} else {
 		// get jwt private key
 		privateKey := privateJwk.Key.(*rsa.PrivateKey)
+		publicJwk := privateJwk.Public()
+		issueAt := time.Now().Unix()
+		notBefore := int64(0)
+		expiry := time.Now().Add(time.Duration(expiresIn) * time.Second).Unix()
 
-		issueAt := jwt2.NumericDate(time.Now().Unix())
-		notBefore := jwt2.NumericDate(time.Now().Unix())
-		expiry := jwt2.NumericDate(time.Now().Add(time.Duration(expiresIn) * time.Second).Unix())
-
-		var claims = &jwt.StandardClaims{
-			Claims: jwt2.Claims{
-				Expiry:    &expiry,
-				ID:        accessToken,
-				IssuedAt:  &issueAt,
+		var claims = &jwt.Claims{
+			StandardClaims: jwtgo.StandardClaims{
+				ExpiresAt: expiry,
+				Id:        accessToken,
+				IssuedAt:  issueAt,
 				Issuer:    s.cnf.Oauth.Issuer,
-				NotBefore: &notBefore,
+				NotBefore: notBefore,
 				Subject:   user.ID,
 			},
+			TenantID: user.TenantID,
 			Scope: scope,
 		}
-		return jwt.MakeRSASignedJWT(claims, privateKey)
+		token := jwtgo.NewWithClaims(jwtgo.SigningMethodRS256, claims)
+		token.Header["kid"] = publicJwk.KeyID
+		log.Println(publicJwk.KeyID)
+		return token.SignedString(privateKey)
 	}
 }
 

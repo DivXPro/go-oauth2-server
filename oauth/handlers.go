@@ -31,14 +31,8 @@ type GrantDTO struct {
 }
 
 // tokensHandler handles all OAuth 2.0 grant types
-// (POST /v1/oauth/tokens)
+// (POST /v1/oauth/token)
 func (s *Service) tokensHandler(w http.ResponseWriter, r *http.Request) {
-	// Parse the form so r.Form becomes available
-	//if err := r.ParseForm(); err != nil {
-	//	response.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
-
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		response.Error(w, err.Error(), getErrStatusCode(err))

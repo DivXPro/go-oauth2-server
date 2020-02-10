@@ -44,7 +44,8 @@ func (b *initFileBackend) LoadConfig() (*Config, error) {
 	newCnf.Oauth.Issuer = cfg.Section("oauth").Key("issuer").String()
 	newCnf.Oauth.PasswordSalt = cfg.Section("oauth").Key("password_salt").String()
 	newCnf.Oauth.PasswordSecret = cfg.Section("oauth").Key("password_secret").String()
-
+	newCnf.Oauth.AccessTokenLifetime, _ = cfg.Section("oauth").Key("expires_in").Int()
+	newCnf.Oauth.RefreshTokenLifetime = newCnf.Oauth.AccessTokenLifetime * 2
 	return newCnf, nil
 }
 

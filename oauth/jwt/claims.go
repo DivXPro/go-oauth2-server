@@ -1,10 +1,11 @@
 package jwt
 
 import (
-	"gopkg.in/square/go-jose.v2/jwt"
+	jwtgo "github.com/dgrijalva/jwt-go"
 )
 
-type StandardClaims struct {
-	jwt.Claims
+type Claims struct {
+	jwtgo.StandardClaims
 	Scope string `json:"scope,omitempty"`
+	TenantID string `json:"tenantId, omitempty"`
 }
